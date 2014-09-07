@@ -1,13 +1,12 @@
 #!/bin/bash
 
-DEVICE="-D /dev/cdrom"
-
+DEVICE="/dev/cdrom"
 
 function read_info {
-	TRACKFILE=$1
-	QUERY=$2
+	TRACKFILE="$1"
+	QUERY="$2"
 	
-	grep "^$QUERY=" $TRACKFILE | sed -E "s@^$QUERY\=\s*['\"]?(.*)['\"]?\$@\1@" | sed -E "s@['\"]\$@@"
+	grep "^$QUERY=" "$TRACKFILE" | sed -E "s@^$QUERY\=\s*['\"]?(.*)['\"]?\$@\1@" | sed -E "s@['\"]\$@@"
 }
 
 
@@ -15,7 +14,7 @@ mkdir -p tmp
 cd tmp
 
 rm -rf *
-cdda2wav -L 0 -B $DEVICE
+cdda2wav -L 0 -B -D "$DEVICE"
 
 #cp audio.cddb ..
 
@@ -53,5 +52,7 @@ echo "$Albumperformer~$Albumtitle" >> album.info
 cp titles.info album.info ..
 
 cd ..
+
+eject "$DEVICE"
 
 echo "Bitte die Dateien titles.info und album.info korrigieren. Danach encode-ripped.sh aufrufen, um mit dem Kodieren zu beginen."
