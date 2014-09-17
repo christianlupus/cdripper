@@ -1,6 +1,10 @@
 #!/bin/bash
 
+if [ $# -eq 0 ]; then
 DEVICE="/dev/cdrom"
+else
+DEVICE="$1"
+fi
 
 function read_info {
 	TRACKFILE="$1"
