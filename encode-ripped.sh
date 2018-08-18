@@ -38,7 +38,7 @@ fi
 echo Normalisiere die Dateien
 
 cd tmp
-normalize-audio -b audio_*.wav
+normalize -b audio_*.wav
 cd ..
 
 

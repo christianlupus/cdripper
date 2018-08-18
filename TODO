@@ -2,3 +2,8 @@ Write INSTALLATION documentation
 Use per user config directory
 Handle special chars in queries
 Fill in dummy code in output files if necessary
+
+Check for existing tmp folder before starting ripping to avoid overwriting of data
+Normalize optional step via configuration
+Configure noralize command in config file
+
