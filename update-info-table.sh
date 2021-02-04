@@ -1,12 +1,13 @@
 #!/bin/sh
 
 if [ $# -ne 1 ]; then
-echo "Please give teh parameters as # $0 <table>"
+echo "Please give the parameters as # $0 <table>"
 exit 1
 fi
 
 if [ ! -r titles.info -a ! -w titles.info ]; then
 echo Cannot access the title file
+exit 1
 fi
 
 table="$1"
