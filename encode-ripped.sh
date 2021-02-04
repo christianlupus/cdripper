@@ -21,6 +21,11 @@ export MP3_HQ_PREFIX="$MP3_HQ_DIR/$ALBUM"
 export MP3_LQ_PREFIX="$MP3_LQ_DIR/$ALBUM"
 export OGG_PREFIX="$OGG_DIR/$ALBUM"
 
+if grep '/' titles.info album.info; then
+	echo 'There is a forward slash in the info files. This is currently not supported.'
+	exit 1
+fi
+
 echo "Bitte Jahr eingeben (oder nichts)"
 
 read YEAR
