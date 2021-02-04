@@ -10,7 +10,7 @@ mkdir -p tmp
 cd tmp
 
 rm -rf *
-cdda2wav -L 0 -B -D "$DEVICE"
+cdda2wav -B -D "$DEVICE"
 
 #cp audio.cddb ..
 
