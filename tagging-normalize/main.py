@@ -3,7 +3,7 @@ import tagging
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--debug', action='store_true', help='Put out debugging information')
+parser.add_argument('-d', '--debug', action='store_true', help='Put out debugging information')
 
 sps = parser.add_subparsers(metavar='MODE', help='Select the main mode of operation', required=True)
 
@@ -29,6 +29,36 @@ parser_read.add_argument('-a', '--output-album', nargs=1, help='Write album info
 parser_read.add_argument('-s', '--sort-by-track', action='store_true', help='Sort the output by the track number when exporting')
 parser_read.add_argument('folder', nargs='+', help='The folders to look for files in')
 parser_read.set_defaults(func=readFiles)
+
+def updateId3(args):
+    fileTagger = tagging.tagger.Tagger(args.dry_run)
+
+    fileTagger.parseTrackFile(args.input[0])
+    if args.album_info is not None:
+        fileTagger.parseAlbumOverwriteFile(args.album_info[0])
+    
+    if args.debug:
+        fileTagger.printDebug()
+    
+    if args.fixup is not None:
+        fileTagger.fixupTags(args.fixup[0], args.debug)
+    
+    if args.summary:
+        fileTagger.printSummary()
+
+    fileTagger.applyTags(args.debug)
+
+    if args.move:
+        fileTagger.moveFiles(args.debug)
+
+parser_update_tags = sps.add_parser('update-files', help='Update the metadata tags in the files')
+parser_update_tags.add_argument('-i', '--input', nargs=1, required=True, help='Read track information from this file')
+parser_update_tags.add_argument('-a', '--album-info', nargs=1, help='Overwrite album info from this file')
+parser_update_tags.add_argument('-f', '--fixup', nargs=1, help='Table of fixup strings replacements related to dances')
+parser_update_tags.add_argument('-m', '--move', action='store_true', help='Rename the files according to the tags')
+parser_update_tags.add_argument('--summary', action='store_true', help='Output a summary of the file tags before applying them')
+parser_update_tags.add_argument('--dry-run', action='store_true', help='Do not perform any operation but write what would have been done')
+parser_update_tags.set_defaults(func=updateId3)
 
 args = parser.parse_args()
 
