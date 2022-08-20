@@ -89,6 +89,9 @@ class Tagger:
         lines = content.split('\n')
         maps = []
         for line in lines:
+            if line.startswith('#') or line == '':
+                continue
+            
             pts = line.split(':')
             maps.append(pts)
         
