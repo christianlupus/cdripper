@@ -43,6 +43,8 @@ def updateId3(args):
     if args.fixup is not None:
         fileTagger.fixupTags(args.fixup[0], args.debug)
     
+    fileTagger.checkTags()
+    
     if args.summary:
         fileTagger.printSummary()
 

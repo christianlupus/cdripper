@@ -3,6 +3,7 @@ import os
 import json
 import tabulate
 import re
+import sys
 
 class Tagger:
     def __init__(self, dry):
@@ -30,6 +31,19 @@ class Tagger:
         print('Parsed data from json files:')
         print(self.data)
     
+    def checkTags(self):
+        for row in self.data:
+            self.__checkStringForUnicode(row, 'artist')
+            self.__checkStringForUnicode(row, 'title')
+            self.__checkStringForUnicode(row, 'album')
+    
+    def __checkStringForUnicode(self, row, field):
+        string = row[field]
+        for c in string:
+            if ord(c) > 127:
+                print(f"Warning: Found Unicode char in track {row['track']} in field {field}", file=sys.stderr)
+                return
+
     def applyTags(self, debug):
         for row in self.data:
             self.__applyTagToFile(row, debug)
