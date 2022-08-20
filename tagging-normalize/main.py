@@ -56,8 +56,8 @@ parser_update_tags.add_argument('-i', '--input', nargs=1, required=True, help='R
 parser_update_tags.add_argument('-a', '--album-info', nargs=1, help='Overwrite album info from this file')
 parser_update_tags.add_argument('-f', '--fixup', nargs=1, help='Table of fixup strings replacements related to dances')
 parser_update_tags.add_argument('-m', '--move', action='store_true', help='Rename the files according to the tags')
-parser_update_tags.add_argument('--summary', action='store_true', help='Output a summary of the file tags before applying them')
-parser_update_tags.add_argument('--dry-run', action='store_true', help='Do not perform any operation but write what would have been done')
+parser_update_tags.add_argument('-s', '--summary', action='store_true', help='Output a summary of the file tags before applying them')
+parser_update_tags.add_argument('-n', '--dry-run', action='store_true', help='Do not perform any operation but write what would have been done')
 parser_update_tags.set_defaults(func=updateId3)
 
 args = parser.parse_args()
