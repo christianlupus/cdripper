@@ -9,7 +9,7 @@ class Tagger:
         self.data = []
         self.dry = dry
 
-        pattern = '(.*?) *\(([0-9A-Za-z ]+)\)'
+        pattern = '(.*?) *\(([A-Za-z ]+ *[0-9]+)\)'
         self.reFixup = re.compile(pattern)
 
     def parseTrackFile(self, trackFile):
@@ -102,6 +102,12 @@ class Tagger:
             for m in maps:
                 # print('Old dance value', dance, 'lookking for', m[0])
                 dance = dance.replace(m[0], m[1])
+
+            pattern = '([a-zA-Z]+) *([0-9]+)'
+            subre = re.compile(pattern)
+            submatch = subre.match(dance)
+            if submatch:
+                dance = '{dance} {speed}'.format(dance=submatch.group(1), speed=submatch.group(2))
 
             title = '{title} ({info})'.format(title=base, info=dance)
             
