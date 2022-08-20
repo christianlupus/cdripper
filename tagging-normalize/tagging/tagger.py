@@ -131,15 +131,22 @@ class Tagger:
         print()
     
     def moveFiles(self, debug):
+        trackLen = self.__getTrackFieldWidth()
         for row in self.data:
-            fileName = self.__getNewFileName(row)
+            fileName = self.__getNewFileName(row, trackLen)
             if fileName != row['fileName']:
                 self.__renameFile(row['fileName'], fileName)
             elif debug:
                 print('Moving of file {name} is not required'.format(name=fileName))
 
-    def __getNewFileName(self, row):
-        name = '{track} - {artist} - {title}.mp3'.format(track=row['track'], artist=row['artist'], title=row['title'])
+    def __getTrackFieldWidth(self):
+        tracks = [row['track'] for row in self.data]
+        tracks.sort()
+        maximum = tracks[-1]
+        return len(str(maximum))
+    
+    def __getNewFileName(self, row, trackLen):
+        name = f"{row['track']:>0{trackLen}} - {row['artist']} - {row['title']}.mp3"
         name = name.replace('/', '_')
         return name
         
