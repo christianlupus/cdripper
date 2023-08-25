@@ -3,6 +3,5 @@ Use per user config directory
 Handle special chars in queries
 Fill in dummy code in output files if necessary
 
-Normalize optional step via configuration
 Configure noralize command in config file
 

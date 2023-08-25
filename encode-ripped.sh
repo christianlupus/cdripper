@@ -1,11 +1,61 @@
-#!/bin/sh
+#!/bin/sh -e
 
-if [ ! -n "$1" ]; then
-	echo "Bitte die Zieladresse für die Dateien angeben."
+YEAR=
+YEAR_SET=
+NORMALIZE=1
+DESTINATION=
+
+while [ $# -gt 0 ]
+do
+	case "$1" in
+		--year)
+			YEAR="$2"
+			YEAR_SET=1
+			shift
+			;;
+		--no-year)
+			YEAR=
+			YEAR_SET=1
+			;;
+		--no-normalize)
+			NORMALIZE=
+			;;
+		--out)
+			DESTINATION="$2"
+			shift
+			;;
+		*)
+			echo "Unexpected cli parameter $1. Exiting."
+			exit 1
+	esac
+	shift
+done
+
+if [ -z "$DESTINATION" ]
+then
+	echo "The mandatory output path was not given using --out CLI parameter. Please adjust."
 	exit 1
 fi
 
-DESTINATION="$1"
+if [ ! -d "$DESTINATION" -o ! -w "$DESTINATION" ]
+then
+	echo "The destination provided is no valid and writable folder."
+	exit 1
+fi
+
+if [ -z "$YEAR_SET" ]
+then
+	echo "Please provide the year of the publication. (You can avoid this question by providing the --year or --no-year CLI parameter."
+	echo "The year can also be empty."
+	read YEAR
+fi
+
+export SET_YEAR=0
+
+if [ -n "$YEAR" ]; then
+	SET_YEAR=1
+	export YEAR
+fi
 
 export MP3_HQ_OPTS="-b 320 -q 2"
 export MP3_LQ_OPTS="--vbr-new -B 256 -q 5"
@@ -26,25 +76,17 @@ if grep '/' titles.info album.info; then
 	exit 1
 fi
 
-echo "Bitte Jahr eingeben (oder nichts)"
-
-read YEAR
-export SET_YEAR=0
-
-if [ -n "$YEAR" ]; then
-	SET_YEAR=1
-	export YEAR
-fi
-
 ###
 # Normalizing
 
-echo Normalisiere die Dateien
+if [ -n "$NORMALIZE" ]
+then
+	echo "Normalizing the audio tracks"
 
-cd tmp
-normalize -b audio_*.wav
-cd ..
-
+	cd tmp
+	normalize -b audio_*.wav
+	cd ..
+fi
 
 ###
 # Create directories
@@ -66,7 +108,7 @@ encode_track() {
 	
 	local basename="$tracknumber - $trackartist - $trackname"
 	
-	echo "Encodiere $basename" >&2
+	echo "Encoding $basename" >&2
 	
 	lame $MP3_HQ_OPTS -S "tmp/audio_$1.wav" "$MP3_HQ_PREFIX/$basename.mp3"
 # 	sleep 1
@@ -75,7 +117,7 @@ encode_track() {
 	oggenc $OGG_OPTS -Q "tmp/audio_$1.wav" -o "$OGG_PREFIX/$basename.ogg"
 # 	sleep 1
 	
-	echo "Tagging der Dateien von $basename" >&2
+	echo "Tagging files from $basename" >&2
 	
 	for f in "$MP3_HQ_PREFIX/$basename.mp3" "$MP3_LQ_PREFIX/$basename.mp3" "$OGG_PREFIX/$basename.ogg"
 	do
@@ -120,7 +162,7 @@ fi
 ###
 # Create the M3U file
 
-echo "Erzeuge M3U Dateien..."
+echo "Creating M3U8 files."
 
 rm -f "$MP3_HQ_PREFIX/$ALBUM.m3u" "$MP3_LQ_PREFIX/$ALBUM.m3u" "$OGG_PREFIX/$ALBUM.m3u"
 
@@ -148,3 +190,4 @@ do
 	
 done
 
+echo "Encoding is done"
