@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 YEAR=
 YEAR_SET=
@@ -132,17 +132,21 @@ encode_track() {
 	done
 }
 
+filtered_titles() {
+	cat titles.info | sed 's@[[:space:]]*$@@' | grep -v '^#' | grep -v '^$'
+}
+
 prepare_encode_parallel() {
 	IFS='~' read tracknumber tmp artist name <<< "$1"
 	encode_track "$tracknumber" "$artist" "$name"
 }
 
 encode_parallelly() {
-	parallel prepare_encode_parallel {} :::: titles.info
+	parallel prepare_encode_parallel {} :::: <( filtered_titles )
 }
 
 encode_serially() {
-	cat titles.info | while IFS='~' read tracknumber tmp artist name
+	filtered_titles | while IFS='~' read tracknumber tmp artist name
 	do
 		encode_track "$tracknumber" "$artist" "$name"
 	done

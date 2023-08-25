@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 function read_info {
 	TRACKFILE="$1"
@@ -7,10 +7,14 @@ function read_info {
 	iconv -f iso-8859-1 "$TRACKFILE" | grep "^$QUERY=" | sed -E "s@^$QUERY\=\s*['\"]?(.*)['\"]?\$@\1@" | sed -E "s@['\"]\$@@"
 }
 
-
 cd tmp
 
 rm -rf titles.info album.info
+
+cat > titles.info << EOF
+# Format:
+# <track number>~<length in seconds>~<artist>~<title>
+EOF
 
 for f in audio_*.inf
 do
@@ -29,9 +33,6 @@ do
 	
 	echo "$Tracknumber~$Sekunden~$Performer~$Title" >> titles.info
 	
-# 	echo $Tracknumber
-# 	echo $Performer
-	
 done
 
 Albumperformer="$(read_info audio_01.inf Albumperformer)"
@@ -43,4 +44,4 @@ cp titles.info album.info ..
 
 cd ..
 
-echo "Bitte die Dateien titles.info und album.info korrigieren. Danach encode-ripped.sh aufrufen, um mit dem Kodieren zu beginen."
+echo "Please adjust the files titles.info and album.info accordingly. Call encode-ripped.sh afterwards to start encoding in compressed formats."

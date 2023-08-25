@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 DEVICE="/dev/cdrom"
 CDDB="-L 0 --cddbp-server=gnudb.gnudb.org"
